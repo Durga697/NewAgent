@@ -1,0 +1,20 @@
+{
+  "name": "Harbour Clinic",
+  "tagline": "Time for your wellbeing.",
+  "address": "12 Harbour Road, London",
+  "timezone": "Europe/London",
+  "locale": "en-GB",
+  "currency": "GBP",
+  "calendar": {
+    "opensAt": "10:00",
+    "closesAt": "17:00",
+    "slotMinutes": 20,
+    "bookingWindowDays": 14,
+    "openWeekdays": [1, 2, 3, 4, 5],
+    "blockedTimes": [{"start": "13:00", "end": "14:00"}]
+  },
+  "services": [
+    {"id": "assessment", "name": "Wellbeing assessment", "minutes": 40, "price": 75, "description": "A personal wellbeing consultation."},
+    {"id": "followup", "name": "Follow-up appointment", "minutes": 20, "price": 40, "description": "Review your progress."}
+  ]
+}

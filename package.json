@@ -1,0 +1,32 @@
+{
+  "name": "front-desk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "test": "node --test",
+    "test:browser": "node checks/browser.mjs",
+    "test:voice": "node checks/gemini.mjs",
+    "test:config": "node checks/config.mjs",
+    "screenshots": "node checks/screenshots.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.32.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  },
+  "description": "AI-powered voice appointment booking with Gemini Live, streaming audio and a configurable demo calendar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Durga697/NewAgent.git"
+  },
+  "engines": {
+    "node": ">=20.11.0"
+  }
+}

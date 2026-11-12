@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f6f5f0"><title>Front Desk — A conversation away</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="Front Desk home"><span class="brand-icon">f<span>·</span></span><span>front desk<span class="brand-dot">.</span></span></a>
+  <div class="workspace"><span class="studio-icon" data-business-initial></span><div><span data-business-name></span><small>Demo workspace</small></div><span class="chevron">⌄</span></div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav><button class="nav-item active" id="navDesk"><span>◉</span> Front desk <span class="nav-count">LIVE</span></button><button class="nav-item" id="navBookings"><span>▦</span> Appointments <span id="bookingCount" class="count">0</span></button></nav>
+  <div class="sidebar-bottom"><div class="demo-note"><span class="tiny-dot"></span> A space to try things out<p>Sample business. Demo calendar.<br>Real conversations.</p></div><div class="profile"><div class="avatar" data-business-initials></div><div><span data-business-name></span><small>Local demo</small></div><span>↗</span></div></div>
+</aside>
+<main>
+  <header><div><span class="crumb">Workspace</span><span class="slash">/</span>Front desk</div><span class="sandbox"><span class="tiny-dot"></span> Demo environment</span></header>
+  <section class="page-head"><div><div class="eyebrow">LESS BACK-AND-FORTH. MORE HUMAN.</div><h1>Your next appointment,<br>just a conversation away.</h1><p>Tell us what works for you. We’ll take care of the calendar.</p></div><div class="head-mark" aria-hidden="true">✳</div></section>
+  <div class="main-grid">
+    <section class="conversation card">
+      <div class="card-heading"><span class="section-label"><span class="tiny-dot"></span> YOUR VOICE CONCIERGE</span><span id="status" class="status">Ready when you are</span></div>
+      <div class="voice-space"><div class="orb-wrap" id="orbWrap"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orb"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="orb-spark">✧</span></div>
+      <h2 id="voiceTitle">Let’s find your perfect time.</h2><p id="voiceHint">A friendly voice. A few simple questions.<br>One less thing on your to-do list.</p>
+      <button id="start" class="primary"><span>♩</span> Start a conversation <span>↗</span></button>
+      <div class="call-controls hidden" id="callControls"><button id="mute" class="secondary">Mute mic</button><button id="finish" class="finish">Finish conversation</button></div><button id="resumeAudio" class="secondary hidden">Resume audio</button>
+      <div class="voice-foot"><span>◈</span> Powered by Google Gemini Live <span class="middle-dot">·</span> AI receptionist</div>
+      </div>
+      <div class="caption-area"><div class="caption-top"><span>CONVERSATION</span><span id="workStatus">Live captions appear here</span></div><div id="transcript" class="transcript" role="log" aria-live="polite"><div class="caption-empty"><span>“</span><p><span id="exampleRequest">Tell us what you’d like to book.</span><br>You can interrupt or change your mind anytime.</p></div></div></div>
+      <div id="notice" class="notice hidden" role="status"></div>
+      <div class="privacy"><span>♧</span> Your microphone is only on during a conversation.</div>
+    </section>
+    <aside class="booking-panel">
+      <section class="business-card card"><div class="business-top"><span class="business-logo" data-business-initial></span><span class="pill">SAMPLE BUSINESS</span></div><h2 data-business-name></h2><p id="businessTagline"></p><div class="business-meta"><span>⌖</span> <span id="businessAddress"></span></div><div class="business-meta"><span>◷</span> <span id="businessHours"></span></div><div class="business-footer"><span class="tiny-dot"></span> Demo calendar connected<span>↗</span></div></section>
+      <section class="availability card"><div class="panel-title"><h3>Make room for yourself.</h3><span>↗</span></div><p class="subtle">Explore the calendar, or just ask by voice.</p><label for="service">SERVICE</label><select id="service"></select><div class="date-row"><label for="date">PREFERRED DATE</label><span id="businessTimezone"></span></div><input type="date" id="date"><div class="slots-label"><span>Available times</span><span id="slotCount"></span></div><div id="slots" class="slots" aria-live="polite"></div><div class="demo-form"><label for="name">YOUR NAME</label><input id="name" placeholder="How should we address you?" maxlength="80" autocomplete="name"><button id="review" class="secondary full" disabled>Review appointment <span>→</span></button></div><p class="calendar-note">Times update as bookings are confirmed.</p></section>
+    </aside>
+  </div>
+  <section id="reviewCard" class="review-card hidden card" aria-live="polite"></section>
+  <section class="appointments-section" id="appointments"><div class="appointments-head"><div><div class="eyebrow">ALL SET, ALL IN ONE PLACE</div><h2>Your appointments</h2></div><span class="pill">DEMO CALENDAR</span></div><div id="bookings" class="bookings"><div class="empty-bookings"><span>▦</span><div><h3>A little space for what’s next.</h3><p>Your confirmed appointments will appear here.</p></div></div></div></section>
+  <footer><span>Consider it taken care of.</span><span>Front Desk <span class="footer-flower">✳</span> Made for the moments in between.</span></footer>
+</main><script type="module" src="/app.js"></script>
+</body></html>

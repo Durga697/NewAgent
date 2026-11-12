@@ -1,0 +1,21 @@
+{
+  "name": "Juniper Studio",
+  "tagline": "Good hair. A little self-care. All you.",
+  "address": "24 Garden Lane, Bengaluru",
+  "timezone": "Asia/Kolkata",
+  "locale": "en-IN",
+  "currency": "INR",
+  "calendar": {
+    "opensAt": "09:00",
+    "closesAt": "18:00",
+    "slotMinutes": 30,
+    "bookingWindowDays": 30,
+    "openWeekdays": [0, 1, 2, 3, 4, 5, 6],
+    "blockedTimes": [{"start": "11:00", "end": "12:00"}, {"start": "14:00", "end": "15:00"}]
+  },
+  "services": [
+    {"id": "cut", "name": "Signature haircut", "minutes": 60, "price": 1200, "description": "A fresh shape, finished your way."},
+    {"id": "consult", "name": "Style consultation", "minutes": 30, "price": 500, "description": "Find your next look with an expert."},
+    {"id": "treatment", "name": "Hair & scalp ritual", "minutes": 90, "price": 1800, "description": "A restorative reset from root to tip."}
+  ]
+}
