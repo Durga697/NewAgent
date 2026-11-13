@@ -1,0 +1,23 @@
+{
+  // Paths are local to this Windows account. Restart Edith after changing this file.
+  "enabled": true,
+  "roots": [
+    { "id": "Downloads", "path": "${home}/Downloads" }
+    // , { "id": "Documents", "path": "${home}/Documents" }
+    // , { "id": "Desktop", "path": "${home}/Desktop" }
+  ],
+  "blockedExtensions": [
+    ".exe", ".dll", ".sys", ".ocx", ".pif", ".sct", ".msi", ".msp", ".msix", ".appx", ".appxbundle", ".com", ".scr", ".cpl",
+    ".bat", ".cmd", ".ps1", ".psm1", ".psd1", ".vbs", ".vbe", ".js", ".jse", ".mjs", ".cjs",
+    ".wsf", ".wsh", ".hta", ".lnk", ".url", ".website", ".scf", ".reg", ".inf",
+    ".py", ".pyw", ".rb", ".sh", ".bash", ".jar", ".ahk", ".chm", ".application", ".appref-ms",
+    ".html", ".htm", ".svg", ".search-ms", ".library-ms", ".settingcontent-ms",
+    ".docm", ".dotm", ".xlsm", ".xlam", ".pptm", ".iso", ".img"
+  ],
+  "maxDepth": 8,
+  "maxFiles": 20000,
+  "resultTtlSeconds": 600,
+  "maxResults": 50,
+  "maxStoredResults": 200,
+  "auditFile": "data/tool-audit.jsonl"
+}
