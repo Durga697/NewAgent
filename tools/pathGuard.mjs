@@ -1,6 +1,10 @@
 import path from 'node:path';
-import {lstat,realpath,stat} from 'node:fs/promises';
+import fs from 'node:fs';
+import {promisify} from 'node:util';
 import {ToolError} from './errors.mjs';
+// Callback-backed operations also handle Windows names that cannot be resolved
+// by older Node fs/promises native bindings without an orphaned rejection.
+const lstat=promisify(fs.lstat),realpath=promisify(fs.realpath.native),stat=promisify(fs.stat);
 
 export function validatePathText(value,platform=process.platform){
   if(typeof value!=='string'||!value||/[\x00-\x1f]/.test(value))throw new ToolError('INVALID_PATH','A valid local path is required.');

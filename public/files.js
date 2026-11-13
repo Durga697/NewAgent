@@ -36,6 +36,7 @@ window.addEventListener('edith:ready',event=>{
   const enabled=settings.enabled&&folders.some(f=>f.available);
   $('fileQuery').disabled=!enabled;$('fileFolder').disabled=!enabled;$('fileSearchButton').disabled=!enabled;
   $('fileFolderStatus').textContent=!settings.enabled?'Local file tools are disabled.':folders.map(f=>`${f.id}: ${f.available?f.path:(f.error?.message||'unavailable')}`).join(' · ')||'No folders are configured.';
+  if(settings.indexing){$('fileFolderStatus').textContent+=` · Indexing ${settings.indexCount||0} filenames…`;setTimeout(async()=>{try{const response=await fetch('/api/state');if(response.ok){const data=await response.json();window.dispatchEvent(new CustomEvent('edith:ready',{detail:data.files}));}}catch{}},2000);}
   render(settings.results);
 });
 window.addEventListener('edith:files',event=>{render(event.detail);$('localFiles').scrollIntoView({behavior:'smooth',block:'start'});});

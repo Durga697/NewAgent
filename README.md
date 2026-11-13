@@ -63,6 +63,7 @@ Regenerate the screenshots with `npm run screenshots`. This uses an isolated in-
 | Audio | AudioWorklet, Web Audio API | Mono PCM16 capture at 16 kHz, resampling, playback scheduling, and interruption cleanup |
 | UI updates | Server-Sent Events | Calendar availability, draft, and booking updates |
 | Storage | Local JSON with atomic file replacement | Persistent demo bookings and conflict checks in one server process |
+| File tools | Fuse.js, Node.js `fs.watch`, Ajv, JSONC | Fuzzy filename index, change monitoring, validated tool calls and commented folder config |
 | Settings | JSON, dotenv, `Intl` | Business configuration, environment settings, currency, timezone and date formatting |
 | Tests | Node.js test runner, Playwright | Calendar, audio, browser, alternate-business, and simulated voice verification |
 
@@ -228,7 +229,7 @@ npm start               # Live assistant at http://localhost:3000
 
 The integration check creates fictional files in a temporary folder. A **test-only Node preload** intercepts `explorer.exe`; no actual document app opens, no personal files are searched, and no paid AI requests are made. Production never imports that preload. The normal live assistant uses the real Windows adapter.
 
-At startup, Edith builds a metadata-only index of enabled roots and watches changes with Chokidar. The **Find a local file** panel also works without an AI key. Gemini voice requires your existing valid server credential.
+At startup, Edith builds a metadata-only index in the background and watches changes with Node’s recursive filesystem watcher. The UI reports indexing progress; searches during the initial scan return an incomplete-results warning. Normal conversation and bookings can start while indexing continues. The **Find a local file** panel also works without an AI key. Gemini voice requires your existing valid server credential.
 
 Example voice commands:
 
