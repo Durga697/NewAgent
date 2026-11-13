@@ -109,3 +109,14 @@ test('audit failure prevents action execution',async()=>{
   let ran=false;const registry=new ToolRegistry([{name:'sample',parameters:{type:'object',properties:{}},run:()=>{ran=true;return {};}}],()=>{throw {code:'EACCES'};});
   const result=await registry.call('sample',{}, {session:{id:'x'}});assert(result.error);assert.equal(ran,false);
 });
+test('one clear match accepts confirmation once; quoted names and stale/cancelled actions do not open',async()=>{
+  const f=await fixture();try{
+    await f.add('open me.pdf');await f.service.start();
+    let found=await f.call('search_files',{query:'open me'});const resultId=found.results[0].resultId;
+    f.session.fileUserSpeech='Find the file named open me pdf';assert.equal((await f.call('open_file',{resultId})).status,'confirmation_required');assert.equal(f.launches.length,0);
+    f.session.fileUserSpeech='Yes please';f.session.fileSpeechAt=Date.now();assert.equal((await f.call('open_file',{resultId})).status,'launched');assert.equal(f.launches.length,1);
+    f.session.fileUserSpeech='Open it';f.session.fileSpeechAt=Date.now()-61000;assert.equal((await f.call('open_file',{resultId})).status,'confirmation_required');
+    assert.equal((await f.call('open_file',{resultId},{...f.context,source:'ui',isCancelled:()=>true})).error.code,'CANCELLED');assert.equal(f.launches.length,1);
+    assert.equal((await f.call('search_files',{query:'open me'},{...f.context,isCancelled:()=>true})).error.code,'CANCELLED');
+  }finally{await f.close();}
+});

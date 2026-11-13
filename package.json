@@ -10,7 +10,8 @@
     "test:browser": "node checks/browser.mjs",
     "test:voice": "node checks/gemini.mjs",
     "test:config": "node checks/config.mjs",
-    "screenshots": "node checks/screenshots.mjs"
+    "screenshots": "node checks/screenshots.mjs",
+    "test:files": "node checks/files.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.32.0",

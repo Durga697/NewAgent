@@ -11,15 +11,15 @@
 </aside>
 <main>
   <header><div><span class="crumb">Workspace</span><span class="slash">/</span>Front desk</div><span class="sandbox"><span class="tiny-dot"></span> Demo environment</span></header>
-  <section class="page-head"><div><div class="eyebrow">LESS BACK-AND-FORTH. MORE HUMAN.</div><h1>Your next appointment,<br>just a conversation away.</h1><p>Tell us what works for you. We’ll take care of the calendar.</p></div><div class="head-mark" aria-hidden="true">✳</div></section>
+  <section class="page-head"><div><div class="eyebrow">LESS BACK-AND-FORTH. MORE HUMAN.</div><h1>Your files. Your appointments.<br>Just a conversation away.</h1><p>Ask your assistant to find a file in Downloads or find time for your next appointment.</p></div><div class="head-mark" aria-hidden="true">✳</div></section>
   <div class="main-grid">
     <section class="conversation card">
       <div class="card-heading"><span class="section-label"><span class="tiny-dot"></span> YOUR VOICE CONCIERGE</span><span id="status" class="status">Ready when you are</span></div>
       <div class="voice-space"><div class="orb-wrap" id="orbWrap"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orb"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="orb-spark">✧</span></div>
-      <h2 id="voiceTitle">Let’s find your perfect time.</h2><p id="voiceHint">A friendly voice. A few simple questions.<br>One less thing on your to-do list.</p>
+      <h2 id="voiceTitle">How can I help you today?</h2><p id="voiceHint">Find a local file or book an appointment.<br>Just tell your assistant what you need.</p>
       <button id="start" class="primary"><span>♩</span> Start a conversation <span>↗</span></button>
       <div class="call-controls hidden" id="callControls"><button id="mute" class="secondary">Mute mic</button><button id="finish" class="finish">Finish conversation</button></div><button id="resumeAudio" class="secondary hidden">Resume audio</button>
-      <div class="voice-foot"><span>◈</span> Powered by Google Gemini Live <span class="middle-dot">·</span> AI receptionist</div>
+      <div class="voice-foot"><span>◈</span> Powered by Google Gemini Live <span class="middle-dot">·</span> AI assistant</div>
       </div>
       <div class="caption-area"><div class="caption-top"><span>CONVERSATION</span><span id="workStatus">Live captions appear here</span></div><div id="transcript" class="transcript" role="log" aria-live="polite"><div class="caption-empty"><span>“</span><p><span id="exampleRequest">Tell us what you’d like to book.</span><br>You can interrupt or change your mind anytime.</p></div></div></div>
       <div id="notice" class="notice hidden" role="status"></div>
@@ -30,8 +30,16 @@
       <section class="availability card"><div class="panel-title"><h3>Make room for yourself.</h3><span>↗</span></div><p class="subtle">Explore the calendar, or just ask by voice.</p><label for="service">SERVICE</label><select id="service"></select><div class="date-row"><label for="date">PREFERRED DATE</label><span id="businessTimezone"></span></div><input type="date" id="date"><div class="slots-label"><span>Available times</span><span id="slotCount"></span></div><div id="slots" class="slots" aria-live="polite"></div><div class="demo-form"><label for="name">YOUR NAME</label><input id="name" placeholder="How should we address you?" maxlength="80" autocomplete="name"><button id="review" class="secondary full" disabled>Review appointment <span>→</span></button></div><p class="calendar-note">Times update as bookings are confirmed.</p></section>
     </aside>
   </div>
+  <section id="localFiles" class="card file-panel" aria-labelledby="fileHeading">
+    <div class="eyebrow">ON YOUR COMPUTER</div><h2 id="fileHeading">Find a local file</h2>
+    <p class="subtle">Try “Find my latest electricity bill in Downloads.” Filename search only; document contents stay on your computer.</p>
+    <form id="fileSearchForm" class="file-search"><div><label for="fileQuery">FILENAME WORDS</label><input id="fileQuery" placeholder="electricity bill" maxlength="250" required></div><div><label for="fileFolder">ALLOWED FOLDER</label><select id="fileFolder"></select></div><button class="primary" id="fileSearchButton">Search files</button></form>
+    <p id="fileFolderStatus" class="file-message" role="status">Loading allowed folders…</p>
+    <div id="fileAction" class="file-message" role="status"></div>
+    <div id="fileResults" class="file-results" aria-live="polite"><p>Matching files will appear here. Choose a result to open it or show it in its folder.</p></div>
+  </section>
   <section id="reviewCard" class="review-card hidden card" aria-live="polite"></section>
   <section class="appointments-section" id="appointments"><div class="appointments-head"><div><div class="eyebrow">ALL SET, ALL IN ONE PLACE</div><h2>Your appointments</h2></div><span class="pill">DEMO CALENDAR</span></div><div id="bookings" class="bookings"><div class="empty-bookings"><span>▦</span><div><h3>A little space for what’s next.</h3><p>Your confirmed appointments will appear here.</p></div></div></div></section>
   <footer><span>Consider it taken care of.</span><span>Front Desk <span class="footer-flower">✳</span> Made for the moments in between.</span></footer>
-</main><script type="module" src="/app.js"></script>
+</main><script type="module" src="/files.js"></script><script type="module" src="/app.js"></script>
 </body></html>

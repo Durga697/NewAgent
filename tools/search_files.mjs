@@ -9,6 +9,7 @@ export const searchFiles={
     const found=await context.files.index.search(args);
     if(context.isCancelled?.())throw new ToolError('CANCELLED','That search was cancelled.');
     const results=context.files.results.put(context.session,found.matches);
+    if(results.length===1)context.files.results.state(context.session).pending={resultId:results[0].resultId,action:'open'};
     const output={results,warnings:found.warnings,limited:found.limited,query:args.query,contentSearch:false};
     context.session.fileResults=output;context.publish?.('fileResults',output);context.publish?.('fileAction',null);
     return output;
