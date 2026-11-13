@@ -1,5 +1,5 @@
 {
-  "name": "Juniper Studio",
+  "name": "Edith",
   "tagline": "Good hair. A little self-care. All you.",
   "address": "24 Garden Lane, Bengaluru",
   "timezone": "Asia/Kolkata",
@@ -10,12 +10,48 @@
     "closesAt": "18:00",
     "slotMinutes": 30,
     "bookingWindowDays": 30,
-    "openWeekdays": [0, 1, 2, 3, 4, 5, 6],
-    "blockedTimes": [{"start": "11:00", "end": "12:00"}, {"start": "14:00", "end": "15:00"}]
+    "openWeekdays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "blockedTimes": [
+      {
+        "start": "11:00",
+        "end": "12:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
+      }
+    ]
   },
   "services": [
-    {"id": "cut", "name": "Signature haircut", "minutes": 60, "price": 1200, "description": "A fresh shape, finished your way."},
-    {"id": "consult", "name": "Style consultation", "minutes": 30, "price": 500, "description": "Find your next look with an expert."},
-    {"id": "treatment", "name": "Hair & scalp ritual", "minutes": 90, "price": 1800, "description": "A restorative reset from root to tip."}
-  ]
+    {
+      "id": "cut",
+      "name": "Signature haircut",
+      "minutes": 60,
+      "price": 1200,
+      "description": "A fresh shape, finished your way."
+    },
+    {
+      "id": "consult",
+      "name": "Style consultation",
+      "minutes": 30,
+      "price": 500,
+      "description": "Find your next look with an expert."
+    },
+    {
+      "id": "treatment",
+      "name": "Hair & scalp ritual",
+      "minutes": 90,
+      "price": 1800,
+      "description": "A restorative reset from root to tip."
+    }
+  ],
+  "voiceStyle": "Speak in clear, natural Indian English with a gentle Indian accent and a calm, moderate pace. Keep the accent natural rather than exaggerated. Understand callers with varied Indian English accents and Indian names. Stay in English unless the caller asks to change language. If a name, date or time is unclear, ask a short clarifying question instead of guessing; offer to spell back names. Read dates as day and month, times with morning or afternoon and am or pm, and INR prices as rupees. Confirm the exact final details before asking the caller to press Confirm booking."
 }

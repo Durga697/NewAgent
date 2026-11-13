@@ -1,7 +1,7 @@
 import {chromium} from '@playwright/test';
 import {spawn} from 'node:child_process';
 import assert from 'node:assert/strict';
-const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,PORT:'3001',CALENDAR_FILE:':memory:'},stdio:['ignore','pipe','pipe']});
+const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,NODE_ENV:'test',PORT:'3001',CALENDAR_FILE:':memory:'},stdio:['ignore','pipe','pipe']});
 let browser;
 try {
   await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('Test server startup timed out')),10000);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(t);resolve();}});server.on('error',reject);});

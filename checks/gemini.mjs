@@ -12,7 +12,7 @@ provider.on('connection',ws=>{upstream=ws;ws.on('close',()=>closed=true);ws.on('
   if(e.realtimeInput?.audio||e.realtimeInput?.mediaChunks)audioFrames++;
   if(e.toolResponse)replies.push(...e.toolResponse.functionResponses);
 });});
-const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,PORT:'3002',CALENDAR_FILE:':memory:',GEMINI_API_KEY:'local-test-credential',GOOGLE_GEMINI_BASE_URL:`http://127.0.0.1:${provider.address().port}`},stdio:['ignore','pipe','pipe']});
+const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,NODE_ENV:'test',PORT:'3002',CALENDAR_FILE:':memory:',GEMINI_API_KEY:'local-test-credential',GOOGLE_GEMINI_BASE_URL:`http://127.0.0.1:${provider.address().port}`},stdio:['ignore','pipe','pipe']});
 let browser;
 const wait=async condition=>{for(let n=0;n<100;n++){if(condition())return;await new Promise(r=>setTimeout(r,50));}throw new Error('Timed out waiting for mock voice event');};
 try{
@@ -21,7 +21,7 @@ try{
   const context=await browser.newContext({permissions:['microphone']});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://localhost:3002');await page.locator('.slot').first().waitFor();
   await page.getByRole('button',{name:'Start a conversation'}).click();await page.getByText('Connected · listening').waitFor();
-  assert.equal(setup.model,'models/gemini-3.8-live');assert(setup.tools[0].functionDeclarations.every(f=>f.behavior==='NON_BLOCKING'));
+  assert.equal(setup.model,'models/gemini-3.8-live');assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Indian English')));assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Edith')));assert(setup.tools[0].functionDeclarations.every(f=>f.behavior==='NON_BLOCKING'));
   await wait(()=>audioFrames>0);
   const call=(id,name,args)=>upstream.send(JSON.stringify({toolCall:{functionCalls:[{id,name,args}]}}));
   call('availability','check_availability',{serviceId:'consult',date:datePlus(1)});await wait(()=>replies.some(r=>r.id==='availability'));

@@ -26,7 +26,7 @@ Front Desk turns a booking request into a natural conversation. Tell the AI whic
 - **Calendar tools:** non-blocking function calls check available times and prepare booking details on the server.
 - **Confirm before saving:** review the service, date, time, name, and price, then press **Confirm booking**. Voice statements alone do not save a booking.
 - **Visible appointments:** browse open slots and see confirmed bookings in the UI, with server-side conflict checks.
-- **A ready-to-try demo:** Juniper Studio includes services and a sample calendar. Manual booking works without an API key.
+- **A ready-to-try demo:** Edith includes services and a sample calendar. Manual booking works without an API key.
 - **Configurable businesses:** switch branding, services, prices, currency, timezone, hours, and booking rules through JSON.
 - **Session controls:** microphone permission handling, mute/unmute, interruption cleanup, and upstream session shutdown.
 
@@ -92,7 +92,7 @@ On macOS/Linux:
 cp .env.example .env.local
 ```
 
-Environment files are ignored by Git. The included `.env.example` has no credential. You can skip voice configuration and still try the manual demo calendar.
+In local development, `.env.local` takes precedence over inherited shell settings; restart the server after changing it. Production and test processes (`NODE_ENV=production` or `test`) skip `.env.local` and keep their explicitly supplied environment values. `.env` supplies remaining defaults. Environment files are ignored by Git. The included `.env.example` has no credential. You can skip voice configuration and still try the manual demo calendar.
 
 ### 3. Start
 
@@ -131,6 +131,7 @@ Edit [`config/business.json`](config/business.json) and restart. The UI, calenda
 | Setting | What it changes |
 | --- | --- |
 | `name`, `tagline`, `address` | Business identity shown in the UI and used by the AI |
+| `voiceStyle` | Accent, language, pacing and clarification guidance for the AI |
 | `timezone`, `locale`, `currency` | IANA timezone, date/time display, and price formatting |
 | `services` | Unique service IDs, names, durations, prices, and descriptions |
 | `calendar.opensAt`, `calendar.closesAt` | Local opening hours in `HH:mm` format |
@@ -204,3 +205,5 @@ For public deployment, add authentication, HTTPS-aware origin checks, rate and c
 - [Live API function calling](https://ai.google.dev/gemini-api/docs/live-api/tools)
 - [Live WebSocket reference](https://ai.google.dev/api/live)
 - [Audio streaming and interruptions](https://ai.google.dev/gemini-api/docs/live-api/best-practices)
+
+Edith uses configurable Indian English voice guidance, including clarification of names, dates and times. Accent is requested through system instructions; the generated accent can vary between sessions. Native Live audio does not require a forced language-code setting.
