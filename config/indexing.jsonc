@@ -1,0 +1,18 @@
+{
+  // Only configured file-tools roots are authorized. Discovery never grants access.
+  "version": 1,
+  "directory": "data/file-index",
+  "startup": false,
+  "watch": true,
+  "reconcileSeconds": 300,
+  "debounceMs": 350,
+  "batchSize": 100,
+  "maxQueue": 2048,
+  "maxDepth": 64,
+  "maxFiles": 500000,
+  "searchTimeoutMs": 5000,
+  "candidateLimit": 600,
+  "snapshotLimit": 1000,
+  "timezone": "Asia/Kolkata",
+  "ranking": {"exact": 100, "token": 20, "prefix": 12, "fuzzy": 8}
+}

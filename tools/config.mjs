@@ -2,6 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {homedir} from 'node:os';
 import {isAbsolute,resolve} from 'node:path';
 import {parse,printParseErrorCode} from 'jsonc-parser';
+import {loadIndexConfig} from '../index/config.mjs';
 export async function loadFileConfig(filename=process.env.FILE_TOOLS_CONFIG||new URL('../config/file-tools.jsonc',import.meta.url)){
   const errors=[];const config=parse(await readFile(filename,'utf8'),errors,{allowTrailingComma:true});
   if(errors.length)throw new Error(`Invalid file-tool configuration: ${printParseErrorCode(errors[0].error)}`);
@@ -13,6 +14,7 @@ export async function loadFileConfig(filename=process.env.FILE_TOOLS_CONFIG||new
   if(config.blockedExtensions.some(e=>typeof e!=='string'||!/^\.[a-z0-9-]+$/i.test(e)))throw new Error('Blocked extensions must start with a dot.');
   config.roots=config.roots.map(r=>{const path=r.path.replaceAll('${home}',homedir());if(!isAbsolute(path))throw new Error('Allowed folders must use absolute paths or ${home}.');return {...r,path:resolve(path)};});
   config.auditFile=resolve(config.auditFile);
+  config.indexing=await loadIndexConfig();
   // Automated checks never scan a real user's folders unless given an explicit test config.
   if(process.env.NODE_ENV==='test'&&!process.env.FILE_TOOLS_CONFIG){config.enabled=false;config.roots=[];}
   return config;

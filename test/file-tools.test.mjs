@@ -1,3 +1,7 @@
+import {disposable,removeDisposable} from '../checks/helpers/fixtures.mjs';
+import {loadSecurityConfig} from '../safety/config.mjs';
+import {UserAuthority} from '../safety/authority.mjs';
+import {PolicyEngine} from '../safety/policy.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp,writeFile,utimes,mkdir,symlink,rm,readFile,realpath,rmdir} from 'node:fs/promises';
@@ -11,17 +15,20 @@ import {auditLogger} from '../tools/audit.mjs';
 import {toolFailure} from '../tools/errors.mjs';
 
 async function fixture(){
-  const dir=await mkdtemp(path.join(tmpdir(),'edith-tools-')),root=path.join(dir,'Downloads'),outside=path.join(dir,'Outside');
+  const dir=await disposable('edith-tools-'),root=path.join(dir,'Downloads'),outside=path.join(dir,'Outside');
   await mkdir(root);await mkdir(outside);
   const config={...await loadFileConfig(),enabled:true,roots:[{id:'Downloads',path:root}],auditFile:path.join(dir,'audit.jsonl'),resultTtlSeconds:60,maxFiles:100,maxDepth:4};
+  config.security=await loadSecurityConfig();config.indexing={...config.indexing,directory:path.join(dir,'index-store')};
   const launches=[],service=new FileService(config,{launch:async(action,file)=>launches.push({action,file})});
-  const registry=new ToolRegistry(fileTools,auditLogger(config.auditFile));
+  const authority=new UserAuthority({isSessionValid:s=>s?.id==='sample-session'||s?.id==='other'});
+  const policy=new PolicyEngine(config.security,authority);
+  const registry=new ToolRegistry(fileTools,auditLogger(config.auditFile),{policy});
   const session={id:'sample-session',fileSpeechAt:Date.now()},context={session,files:service,source:'voice'};
   async function add(name,modified='2026-01-01T12:00:00Z',contents='PRIVATE CONTENT MUST NEVER LEAVE THE COMPUTER'){
     const file=path.join(root,name);await writeFile(file,contents);await utimes(file,new Date(modified),new Date(modified));return file;
   }
-  async function close(){await service.close();const target=path.resolve(dir);assert(target.startsWith(path.resolve(tmpdir())+path.sep)&&path.basename(target).startsWith('edith-tools-'));await rm(target,{recursive:true,force:true});}
-  return {dir,root,outside,config,service,registry,session,context,launches,add,close,call:(name,args={},ctx=context)=>registry.call(name,args,ctx)};
+  async function close(){await service.close();await removeDisposable(dir);}
+  return {dir,root,outside,config,service,registry,session,context,launches,add,close,call:(name,args={},ctx=context)=>registry.call(name,args,{...ctx,authorization:authority.issue(ctx.session,{source:ctx.source==='ui'?'typed':'voice',text:ctx.session.fileUserSpeech||'Find a file',permissions:['files.read','files.open','files.reveal','cloud.metadata']})})};
 }
 test('Windows containment is case-insensitive, separator aware and refuses UNC, ADS and traversal',()=>{
   assert(containsPath('C:\\Users\\Sam\\Downloads','c:\\users\\SAM\\downloads\\bill.pdf','win32'));
@@ -100,9 +107,9 @@ test('watcher adds/removes filenames; missing folders and permission errors are 
   const f=await fixture();try{
     await f.service.start();const file=await f.add('new-bill.pdf');
     const wait=async condition=>{for(let i=0;i<80;i++){if(await condition())return;await new Promise(r=>setTimeout(r,50));}assert.fail('watcher update timed out');};
-    const canonical=await realpath(file);await wait(()=>f.service.index.entries.has(f.service.index.key(canonical)));await rm(file);await wait(()=>!f.service.index.entries.has(f.service.index.key(canonical)));
+    const canonical=await realpath(file);await wait(async()=>(await f.service.index.snapshot()).some(item=>item.path===canonical));await rm(file);await wait(async()=>!(await f.service.index.snapshot()).some(item=>item.path===canonical));
     assert.equal(toolFailure({code:'EACCES'}).error.code,'PERMISSION_DENIED');
-    const missing=new FileService({...f.config,roots:[{id:'Missing',path:path.join(f.dir,'Missing')}]});await missing.start();assert.equal(missing.index.folders()[0].available,false);await missing.close();
+    const missing=new FileService({...f.config,indexing:{...f.config.indexing,directory:path.join(f.dir,'missing-index')},roots:[{id:'Missing',path:path.join(f.dir,'Missing')}]});await missing.start();assert.equal(missing.index.folders()[0].available,false);await missing.close();
   }finally{await f.close();}
 });
 test('audit failure prevents action execution',async()=>{

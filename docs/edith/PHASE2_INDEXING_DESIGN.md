@@ -1,0 +1,27 @@
+# Phase 2 indexing and synchronization
+
+## Authorization and discovery
+
+Windows fixed volumes are discovered dynamically through the existing capability-bound Windows adapter, using one fixed application-authored Get-CimInstance command with execFile arguments and no user interpolation. Discovery reports type, root, size/free space and whether configured roots exist there; it grants no scan authority. The discovery test injects two fictional volumes through a test-only preload. Production calls the real adapter only on an authorized request. Root letters are never hardcoded by the crawler.
+
+`config/file-tools.jsonc` remains the root allowlist. Configure a narrow folder or explicitly authorize a local drive root there; Phase 1 hard exclusions still win. Desktop, Documents, Downloads, Pictures, Videos, project folders and locally available OneDrive folders work as ordinary configured physical paths. UNC/device/network paths and link redirects are denied. No entire computer scan is enabled by default. Index/audit stores are blocked even beneath an allowed parent. Configuration edits take effect after restart; stale database paths cannot override new guard rules.
+
+## Crawler and worker
+
+One Node worker owns crawling, the SQLite connection, incremental queues and watchers. Directory entries stream through opendir with bounded buffer; depth-first traversal holds at most the configured depth's directory handles. Maximum depth, entries, pending events, batch size, candidate count and RPC requests are bounded. Directory identities prevent repeated traversal. Every directory/file passes PathGuard before metadata collection, including canonical realpath and per-component link refusal. Metadata includes canonical path/name/type/parent/root/drive, size, creation/modified timestamps, indexing time and device/inode identity. File contents are never opened. OneDrive objects whose metadata cannot be obtained are skipped/reported; no content hydration is requested.
+
+Batch commits yield between chunks so the worker can accept control/search messages and the main server/audio remain responsive. Scans support pause/resume/cancel; pause is cooperative at traversal checkpoints. Transient directory-open errors have one bounded retry. Permanent errors are counted and do not crash other directories. Explicit cancellation/shutdown closes directory handles and watchers and preserves committed batches. Deep/entry limits produce partial results and a warning, not invented completeness.
+
+Progress includes real run ID/state, root alias, scanned/indexed/directories/skipped/permission errors, bounded queue depth, elapsed time, speed, latest batch, stored count and last fully successful scan. No exact total/percentage is invented. Directory paths are omitted from progress to reduce disclosure. State transitions and pending rescan completions are correlated by run ID. A scan requested during incremental processing is queued and starts when that processing yields ownership.
+
+## Watchers and reconciliation
+
+Watchers are nonrecursive fs.watch registrations on individually validated visited directories, capped at 256 handles. This avoids blindly installing recursive watchers over protected children. Beyond the cap, or on watcher errors, UI warnings indicate that periodic reconciliation supplies freshness. Events are debounced, deduplicated and coalesced into bounded persistent tasks; bursts fall back to root refresh tasks. Every event is revalidated. File create/modify update metadata, rename reconciles old/new paths, directory events crawl a subtree, and verified deletion removes only index rows. File identity is stored but rename is conservatively modeled as old-path removal/new-path upsert; identity alone is not treated as authority.
+
+Queued work executes in batches, with at most three recorded failure attempts. Remaining work is retried by later events/periodic reconciliation. Periodic scans default to 300 seconds after the index has content (or startup is enabled); Start indexing forces a reconciliation. Missing/offline roots are marked unavailable and their records retained. Complete root scans remove unseen entries; incomplete/error/cancelled runs never infer wholesale deletion. The scanner is interruptible. Watchers are not perfect delivery mechanisms; shutdown/restart/burst gaps are repaired by scans. No USN journal/native integration is claimed.
+
+## Startup/rebuild
+
+Initialize/migrate the database without crawling user files. Restore committed metadata immediately. `startup:false` is default; first search on an empty index demand-starts a scan and waits no more than 150 ms for initial data, so large scans stay asynchronous. Search may return incomplete results and should be repeated as progress continues. Pause/resume operates on an active run; a cancelled/interrupted run restarts from roots using upserts and reconciliation, not a claimed exact checkpoint.
+
+Rebuild is authenticated, policy/audit checked and restricted to app metadata tables. Cancel and wait for any active run first. Corrupt databases are preserved under a timestamped sibling filename. Rebuild never deletes discovered files. New database schema versions are refused rather than silently downgraded. One owner lock prevents a second worker/process writing the same WASM-backed index; recovery checks the old PID. A crashed worker requires restarting the application, not unsafe fallback access.

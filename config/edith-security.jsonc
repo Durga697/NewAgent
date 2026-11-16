@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "filesystem": {
+    // Empty means inherit the existing file-tools allowlist; it never means all drives.
+    "includedRoots": [],
+    "excludedPaths": [],
+    "neverTouchPaths": [],
+    "localOnlyPaths": [],
+    "allowedFileTypes": [".txt", ".md", ".log", ".csv", ".json", ".pdf", ".docx", ".xlsx", ".pptx", ".png", ".jpg", ".jpeg"],
+    "blockedExecutableTypes": [".exe", ".com", ".dll", ".sys", ".msi", ".bat", ".cmd", ".ps1", ".vbs", ".js", ".mjs", ".cjs", ".wsf", ".hta", ".scr", ".lnk", ".url", ".reg", ".docm", ".xlsm", ".pptm"],
+    "autoStartExistingIndex": false
+  },
+  "policy": {"bulkActionThreshold": 10, "requireConfirmationForOverwrite": true, "requireConfirmationForDelete": true, "permanentDeleteAllowed": false, "allowArbitraryShell": false, "allowExecutableFileLaunch": false},
+  "privacy": {"sendFileContentToCloudByDefault": false, "requireRelevantUserRequestForCloudFileContent": true, "allowedProviders": ["gemini"]},
+  "logging": {"directory": "data/security-audit", "maxPageSize": 100, "maxRecordBytes": 8192},
+  "confirmation": {"ttlSeconds": 120, "maxPendingPerSession": 20},
+  "sessions": {"idleSeconds": 1800, "absoluteSeconds": 86400, "maxSessions": 100, "maxRequestsPerSession": 200},
+  "handlers": [
+    {"id": "windows-text", "executable": "${systemRoot}/System32/notepad.exe", "extensions": [".txt", ".md", ".log", ".csv", ".json"], "arguments": ["{file}"]},
+    {"id": "windows-pdf", "executable": "${programFilesX86}/Microsoft/Edge/Application/msedge.exe", "extensions": [".pdf"], "arguments": ["--new-window", "--app={fileUrl}"]}
+  ]
+}

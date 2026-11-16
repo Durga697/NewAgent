@@ -24,6 +24,7 @@ try{
   assert.equal(setup.model,'models/gemini-3.8-live');assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Indian English')));assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Edith')));assert(setup.tools[0].functionDeclarations.every(f=>f.behavior==='NON_BLOCKING'));
   await wait(()=>audioFrames>0);
   const call=(id,name,args)=>upstream.send(JSON.stringify({toolCall:{functionCalls:[{id,name,args}]}}));
+  upstream.send(JSON.stringify({serverContent:{inputTranscription:{text:'Find an appointment tomorrow'},turnComplete:true}}));
   call('availability','check_availability',{serviceId:'consult',date:datePlus(1)});await wait(()=>replies.some(r=>r.id==='availability'));
   assert(replies.find(r=>r.id==='availability').response.times.includes('09:00'));
   call('draft','prepare_booking',{serviceId:'consult',date:datePlus(1),time:'09:00',name:'Voice Guest'});await page.getByRole('button',{name:'Confirm booking'}).waitFor();

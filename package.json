@@ -11,15 +11,20 @@
     "test:voice": "node checks/gemini.mjs",
     "test:config": "node checks/config.mjs",
     "screenshots": "node checks/screenshots.mjs",
-    "test:files": "node checks/files.mjs"
+    "test:files": "node checks/files.mjs",
+    "check": "node checks/syntax.mjs",
+    "test:security": "node --test test/security.test.mjs test/file-tools.test.mjs && node checks/security.mjs",
+    "test:all": "npm test && node checks/security.mjs && npm run test:files && npm run test:voice && npm run test:browser && npm run test:config",
+    "test:phase2": "node --test test/indexing.test.mjs && node checks/files.mjs && node checks/security.mjs",
+    "benchmark:index": "node checks/index-observation.mjs && node checks/index-benchmark.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.32.0",
     "ajv": "^8.20.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "fuse.js": "^7.5.0",
     "jsonc-parser": "^3.3.1",
+    "node-sqlite3-wasm": "0.8.61",
     "ws": "^8.18.0"
   },
   "devDependencies": {

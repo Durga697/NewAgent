@@ -14,14 +14,14 @@ try {
   await page.locator('.slot').first().click();await page.getByLabel('YOUR NAME').fill('Demo Guest');await page.getByRole('button',{name:'Review appointment'}).click();
   await page.getByRole('button',{name:'Confirm booking'}).waitFor();
   let state=await (await context.request.get('http://localhost:3001/api/state')).json();assert.equal(state.bookings.length,0);assert(state.draft);
-  const oldDraft=state.draft.id;
+  const oldDraft=state.draft.id,csrf=state.csrfToken;
   await page.getByRole('button',{name:'Change details'}).click();await page.getByRole('button',{name:'Review appointment'}).click();await page.getByRole('button',{name:'Confirm booking'}).waitFor();
-  const stale=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'http://localhost:3001'},data:{draftId:oldDraft}});assert.equal(stale.status(),409);
+  const stale=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'http://localhost:3001','X-Edith-CSRF':csrf},data:{draftId:oldDraft}});assert.equal(stale.status(),409);
   await page.getByRole('button',{name:'Confirm booking'}).click();await page.locator('.confirmed').waitFor();
   state=await (await context.request.get('http://localhost:3001/api/state')).json();assert.equal(state.bookings.length,1);assert.equal(state.draft,null);
   const times=await (await context.request.get(`http://localhost:3001/api/availability?serviceId=cut&date=${state.bookings[0].date}`)).json();assert(!times.times.includes(state.bookings[0].time));
-  const repeated=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'http://localhost:3001'},data:{draftId:oldDraft}});assert.equal(repeated.status(),409);
-  const forbidden=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'https://untrusted.example'},data:{draftId:oldDraft}});assert.equal(forbidden.status(),403);
+  const repeated=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'http://localhost:3001','X-Edith-CSRF':csrf},data:{draftId:oldDraft}});assert.equal(repeated.status(),409);
+  const forbidden=await context.request.post('http://localhost:3001/api/confirm',{headers:{Origin:'https://untrusted.example','X-Edith-CSRF':csrf},data:{draftId:oldDraft}});assert.equal(forbidden.status(),403);
   await page.getByRole('button',{name:'Start a conversation'}).click();await page.getByText(/Microphone permission was denied/).waitFor();assert(await page.getByRole('button',{name:'Start a conversation'}).isEnabled());
   await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   assert.deepEqual(errors,[]);
