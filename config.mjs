@@ -1,7 +1,6 @@
-import 'dotenv/config';
-import dotenv from 'dotenv';
+import {loadEnvironment} from './environment.mjs';
 import {readFileSync} from 'node:fs';
-dotenv.config({path:'.env.local'});
+loadEnvironment();
 
 export function minuteOfDay(time) {
   if(typeof time!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) throw new Error('Times must use HH:mm (00:00–23:59).');
@@ -9,6 +8,7 @@ export function minuteOfDay(time) {
 }
 export function validateBusiness(b) {
   if(!b || ['name','address','tagline','timezone','locale','currency'].some(k=>typeof b[k]!=='string'||!b[k].trim()))throw new Error('Business text, timezone, locale and currency are required.');
+  if(b.voiceStyle!==undefined && (typeof b.voiceStyle!=='string'||b.voiceStyle.length>2000))throw new Error('voiceStyle must be text up to 2000 characters.');
   new Intl.DateTimeFormat(b.locale,{timeZone:b.timezone});
   new Intl.NumberFormat(b.locale,{style:'currency',currency:b.currency});
   const c=b.calendar;

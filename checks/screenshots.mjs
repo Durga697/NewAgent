@@ -4,7 +4,7 @@ import {spawn} from 'node:child_process';
 import {mkdir} from 'node:fs/promises';
 const output=new URL('../docs/screenshots/',import.meta.url);
 await mkdir(output,{recursive:true});
-const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,PORT:'3004',CALENDAR_FILE:':memory:'},stdio:['ignore','pipe','pipe']});
+const server=spawn(process.execPath,['server.mjs'],{env:{...process.env,NODE_ENV:'test',PORT:'3004',CALENDAR_FILE:':memory:'},stdio:['ignore','pipe','pipe']});
 let browser;
 try {
   await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Screenshot server did not start')),10000);server.once('error',reject);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(timer);resolve();}});});
