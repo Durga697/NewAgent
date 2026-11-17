@@ -9,7 +9,7 @@ try {
   const context=await browser.newContext({viewport:{width:1440,height:1000}});
   await context.addInitScript(()=>{navigator.mediaDevices.getUserMedia=async()=>{throw new DOMException('Test permission denied','NotAllowedError');};});
   const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://localhost:3001');await page.locator('.slot').first().waitFor();
+  await page.goto('http://localhost:3001/demo');await page.locator('.slot').first().waitFor();
   assert.equal(await page.title(),'Front Desk — A conversation away');
   await page.locator('.slot').first().click();await page.getByLabel('YOUR NAME').fill('Demo Guest');await page.getByRole('button',{name:'Review appointment'}).click();
   await page.getByRole('button',{name:'Confirm booking'}).waitFor();

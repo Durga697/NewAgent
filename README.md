@@ -1,10 +1,10 @@
 <div align="center">
 
-# Front Desk
+# EDITH OS
 
-### Find your files. Book your time. Just start talking.
+### A personal workspace for voice and text.
 
-Edith is a local voice assistant that finds and opens files from allowed Windows folders and helps book appointments with a final review before saving.
+Talk to Edith or type a question. The workspace includes live captions, keyboard navigation, session activity and authorized local filename search on Windows.
 
 ![Gemini Live](https://img.shields.io/badge/AI-Gemini_Live-4285F4?style=flat-square)
 ![Node.js](https://img.shields.io/badge/Node.js-20.11%2B-339933?style=flat-square)
@@ -15,7 +15,11 @@ Edith is a local voice assistant that finds and opens files from allowed Windows
 
 </div>
 
-![Front Desk desktop interface with voice concierge and available appointment times](docs/screenshots/desktop.png)
+![EDITH OS home with voice console and workspace status](docs/screenshots/edith-os-home.png)
+
+Start with `npm ci` and `npm start`, then open [the workspace](http://localhost:3000/app). Gemini voice and typed answers use the same server-side credential. Press Ctrl+K (⌘K on Mac) to find a page. Transcripts and activity last for this visit. The hosted release has no paired PC. Task execution, automation, knowledge, memory and OAuth have availability pages.
+
+The [appointment demo](http://localhost:3000/demo) retains its calendar, booking controls and business configuration. The sections below describe the local Windows tools and the legacy demo. See the [architecture](docs/architecture.md), [migration and verification](docs/edith-migration-plan.md), and [mobile preview](docs/screenshots/edith-os-mobile.png).
 
 
 ## Phase 2: persistent local file intelligence

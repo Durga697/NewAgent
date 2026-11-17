@@ -10,7 +10,7 @@ try {
   await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Screenshot server did not start')),10000);server.once('error',reject);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(timer);resolve();}});});
   browser=await chromium.launch({channel:process.env.BROWSER_CHANNEL||'msedge',headless:true});
   const page=await browser.newPage({viewport:{width:1440,height:1050},deviceScaleFactor:1});
-  await page.goto('http://localhost:3004');await page.locator('.slot').first().waitFor();await page.evaluate(()=>document.fonts.ready);
+  await page.goto('http://localhost:3004/demo');await page.locator('.slot').first().waitFor();await page.evaluate(()=>document.fonts.ready);
   await page.screenshot({path:fileURLToPath(new URL('desktop.png',output)),fullPage:true});
   await page.locator('.slot').first().click();await page.getByLabel('YOUR NAME').fill('Alex Morgan');await page.getByRole('button',{name:'Review appointment'}).click();await page.getByRole('button',{name:'Confirm booking'}).waitFor();
   await page.locator('#reviewCard').screenshot({path:fileURLToPath(new URL('review.png',output))});

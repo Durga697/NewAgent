@@ -6,7 +6,7 @@ let browser;
 try{
   await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('Server startup timeout')),10000);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(t);resolve();}});});
   browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage();
-  await page.goto('http://localhost:3003');await page.locator('#businessTagline').getByText('Time for your wellbeing.').waitFor();
+  await page.goto('http://localhost:3003/demo');await page.locator('#businessTagline').getByText('Time for your wellbeing.').waitFor();
   assert.equal(await page.locator('.business-card h2').textContent(),'Harbour Clinic');
   assert.equal(await page.locator('#businessTimezone').textContent(),'Europe/London');
   assert.equal(await page.locator('#service option').count(),2);

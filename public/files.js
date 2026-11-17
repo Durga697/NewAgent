@@ -37,6 +37,7 @@ window.addEventListener('edith:ready',event=>{
   const settings=event.detail;
   if(settings.hosted){
     $('localFiles').hidden=true;
+    if (!document.getElementById('navDesk')) return;
     document.querySelector('.page-head h1').textContent='Book an appointment with Edith';
     document.querySelector('.page-head p').textContent='Ask about available times or choose one from the demo calendar.';
     $('voiceHint').textContent='Tell Edith which appointment you would like to book.';

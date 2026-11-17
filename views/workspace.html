@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <title>EDITH OS · Home</title>
+    <link rel="stylesheet" href="/workspace.css" />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <aside class="sidebar">
+      <a href="/app" class="brand" aria-label="EDITH OS home"
+        ><i data-icon="orb"></i>edith<span>OS</span></a
+      >
+      <nav id="side-nav" aria-label="Workspace navigation"></nav>
+      <a href="/app/settings" class="workspace-link"
+        ><b>E</b><span>Personal workspace<small>Workspace settings</small></span
+        ><i data-icon="settings"></i
+      ></a>
+    </aside>
+    <div class="shell">
+      <header>
+        <div class="crumb">
+          <i data-icon="panel"></i><span class="desktop-crumb">Workspace</span><a href="/app" class="mobile-brand" aria-label="EDITH OS home">edith <small>OS</small></a><em>/</em
+          ><strong id="crumb">Home</strong>
+        </div>
+        <div class="header-actions">
+          <button
+            class="search-button"
+            id="search-open"
+            aria-label="Search workspace"
+          >
+            <i data-icon="search"></i><span>Search workspace</span
+            ><kbd>⌘ K</kbd></button
+          ><a
+            class="icon-button"
+            href="/app/notifications"
+            aria-label="Notifications"
+            ><i data-icon="bell"></i
+          ></a>
+        </div>
+      </header>
+      <main id="content" tabindex="-1">
+        <div class="page-heading">
+          <div>
+            <p id="page-kicker" class="kicker"></p>
+            <h1 id="page-title">Your day, a little easier.</h1>
+            <p id="page-description"></p>
+          </div>
+        </div>
+        <div id="workspace-grid">
+          <div id="console" class="card console">
+            <div class="card-bar">
+              <span class="label"><i data-icon="wave"></i>Voice console</span
+              ><span id="orb-status" class="status" role="status"
+                >Microphone off</span
+              >
+            </div>
+            <div class="stage">
+              <div id="orb-zone" aria-hidden="true">
+                <div class="outer-ring"></div>
+                <div class="inner-ring"></div>
+                <div class="sphere"><div class="sphere-lines"></div></div>
+              </div>
+              <h2 id="orb-title">Ready when you are.</h2>
+              <p id="orb-hint">Start a conversation or type a message below.</p>
+              <div class="controls">
+                <button id="talk" class="primary" disabled>
+                  <i data-icon="mic"></i><span>Talk to Edith</span></button
+                ><button id="mic-toggle" hidden>Mute mic</button
+                ><button id="end-session" hidden>End session</button>
+              </div>
+            </div>
+            <div
+              id="dialogue"
+              role="log"
+              aria-label="Conversation captions"
+              aria-live="polite"
+              hidden
+            ></div>
+            <form id="composer">
+              <label class="sr" for="message">Message Edith</label
+              ><i data-icon="message"></i
+              ><input
+                id="message"
+                maxlength="2000"
+                autocomplete="off"
+                placeholder="Ask Edith anything…"
+                required
+              /><button class="send" aria-label="Send message" disabled>
+                <i data-icon="arrow-up"></i>
+              </button>
+            </form>
+            <p id="console-error" role="alert" hidden></p>
+          </div>
+          <aside id="context" aria-label="Workspace context">
+            <button
+              id="rail-toggle"
+              aria-expanded="false"
+              aria-controls="rail-cards"
+            >
+              Workspace status <i data-icon="chevron"></i>
+            </button>
+            <div id="rail-cards">
+              <section class="card rail-card">
+                <div class="rail-title">
+                  <i data-icon="pulse"></i>
+                  <h2>Workspace status</h2>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Gemini Live</dt>
+                    <dd id="provider-status">Checking</dd>
+                  </div>
+                  <div>
+                    <dt>Microphone</dt>
+                    <dd id="mic-status">Off</dd>
+                  </div>
+                  <div>
+                    <dt>Windows files</dt>
+                    <dd id="device-status">Checking</dd>
+                  </div>
+                </dl>
+                <a href="/app/integrations" class="row-link"
+                  >View connections <i data-icon="arrow-right"></i
+                ></a>
+              </section>
+              <section class="card rail-card shortcuts">
+                <div class="rail-title">
+                  <i data-icon="spark"></i>
+                  <h2>Quick actions</h2>
+                </div>
+                <a href="/app/voice"
+                  ><i data-icon="wave"></i>Open Voice Studio<i
+                    data-icon="diagonal"
+                  ></i
+                ></a>
+                <a href="/app/files"
+                  ><i data-icon="folder"></i>Find a file<i
+                    data-icon="diagonal"
+                  ></i
+                ></a>
+                <a href="/app/calendar"
+                  ><i data-icon="calendar"></i>View calendar<i
+                    data-icon="diagonal"
+                  ></i
+                ></a>
+              </section>
+              <a class="approval-link" href="/app/permissions"
+                ><i data-icon="shield"></i
+                ><span>Permissions &amp; approvals</span
+                ><i data-icon="chevron"></i
+              ></a>
+            </div>
+          </aside>
+        </div>
+        <section id="recent" class="card recent">
+          <div class="recent-heading">
+            <h2>Recent activity</h2>
+            <a href="/app/activity">View all <i data-icon="arrow-right"></i></a>
+          </div>
+          <div id="recent-list"></div>
+        </section>
+        <section id="page-body" hidden></section>
+        <div id="file-view" hidden><!--file-panel--></div>
+      </main>
+    </div>
+    <nav
+      class="mobile-nav"
+      id="mobile-nav"
+      aria-label="Mobile navigation"
+    ></nav>
+    <a id="dock" class="dock" href="/app/voice" aria-label="Open voice controls"
+      ><i data-icon="mic"></i
+    ></a>
+    <dialog id="palette" aria-labelledby="palette-title">
+      <div class="palette-top">
+        <h2 id="palette-title">Search workspace</h2>
+        <button id="palette-close" aria-label="Close search">Esc</button>
+      </div>
+      <input
+        type="search"
+        id="palette-input"
+        aria-label="Find a page"
+        placeholder="Find a page or command…"
+        autocomplete="off"
+      />
+      <nav id="palette-results" aria-label="Search results"></nav>
+    </dialog>
+    <script type="module" src="/workspace.js"></script>
+  </body>
+</html>

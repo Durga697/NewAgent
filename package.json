@@ -14,7 +14,8 @@
     "test:files": "node checks/files.mjs",
     "check": "node checks/syntax.mjs",
     "test:security": "node --test test/security.test.mjs test/file-tools.test.mjs && node checks/security.mjs",
-    "test:all": "npm test && node checks/security.mjs && npm run test:files && npm run test:voice && npm run test:browser && npm run test:config",
+    "test:workspace": "node checks/workspace.mjs",
+    "test:all": "npm test && node checks/security.mjs && npm run test:files && npm run test:voice && npm run test:browser && npm run test:config && npm run test:workspace",
     "test:phase2": "node --test test/indexing.test.mjs && node checks/files.mjs && node checks/security.mjs",
     "benchmark:index": "node checks/index-observation.mjs && node checks/index-benchmark.mjs"
   },
@@ -28,9 +29,10 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.1"
+    "@playwright/test": "^1.64.1",
+    "axe-core": "^4.14.1"
   },
-  "description": "AI-powered voice appointment booking with Gemini Live, streaming audio and a configurable demo calendar",
+  "description": "EDITH OS personal voice and text workspace with Gemini Live, authorized Windows file search and a separate demo calendar",
   "repository": {
     "type": "git",
     "url": "https://github.com/Durga697/NewAgent.git"

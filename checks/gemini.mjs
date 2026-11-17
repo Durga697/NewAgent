@@ -19,7 +19,7 @@ try{
   await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Server startup timeout')),10000);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(timer);resolve();}});});
   browser=await chromium.launch({channel:'msedge',headless:true,args:['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream']});
   const context=await browser.newContext({permissions:['microphone']});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://localhost:3002');await page.locator('.slot').first().waitFor();
+  await page.goto('http://localhost:3002/demo');await page.locator('.slot').first().waitFor();
   await page.getByRole('button',{name:'Start a conversation'}).click();await page.getByText('Connected · listening').waitFor();
   assert.equal(setup.model,'models/gemini-3.8-live');assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Indian English')));assert(setup.systemInstruction.parts.some(p=>p.text?.includes('Edith')));assert(setup.tools[0].functionDeclarations.every(f=>f.behavior==='NON_BLOCKING'));
   await wait(()=>audioFrames>0);

@@ -23,7 +23,7 @@ async function wait(check){for(let i=0;i<100;i++){if(await check())return;await 
 try{
   await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error('File test server startup timeout')),12000);server.stdout.on('data',d=>{if(d.toString().includes('ready')){clearTimeout(t);resolve();}});server.once('error',reject);});
   browser=await chromium.launch({channel:'msedge',headless:true,args:['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream']});const context=await browser.newContext({permissions:['microphone']});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://localhost:3005');await page.getByRole('button',{name:'Search files',exact:true}).waitFor();
+  await page.goto('http://localhost:3005/demo');await page.getByRole('button',{name:'Search files',exact:true}).waitFor();
   const csrf=(await(await context.request.get('http://localhost:3005/api/state')).json()).csrfToken;
   await page.getByRole('button',{name:'Start a conversation'}).click();await page.getByText('Connected · listening').waitFor();
   const call=async(id,name,args)=>{upstream.send(JSON.stringify({toolCall:{functionCalls:[{id,name,args}]}}));await wait(()=>replies.some(r=>r.id===id));return replies.find(r=>r.id===id).response;};
@@ -49,6 +49,11 @@ try{
   await mkdir('data',{recursive:true});await page.locator('#localFiles').screenshot({path:'data/file-panel-preview.png'});
   await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));assert.deepEqual(errors,[]);
   await page.getByRole('button',{name:'Finish conversation'}).click();await page.getByRole('button',{name:'Start a conversation'}).waitFor();
+  await page.goto('http://localhost:3005/app/files');
+  await page.getByLabel('FILENAME WORDS').fill('electricity bill');
+  await page.getByRole('button',{name:'Search files',exact:true}).click();
+  await page.getByText('2 matching files.',{exact:true}).waitFor();
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth));
   const audit=await readFile(path.join(security.logging.directory,'events-3005.jsonl'),'utf8');assert(audit.includes('OUTSIDE_ALLOWLIST'));assert(audit.includes('BLOCKED_EXTENSION'));
   console.log('PASS: voice search -> Gemini tool -> server -> SSE results; latest-first; voice opens second result; click reveals correct file; blocked/outside paths refused and audited; manual search; mobile. Windows launch was intercepted by a test-only preload. No personal files or paid AI calls.');
 }finally{
