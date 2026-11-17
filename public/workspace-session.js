@@ -8,6 +8,20 @@ export function createSession({
   onActivity,
 }) {
   let session;
+  let previousClose = Promise.resolve();
+  function finishSocket(ws) {
+    if (ws.readyState !== WebSocket.OPEN) {
+      ws.close();
+      return Promise.resolve();
+    }
+    // A reverse proxy can finish the browser close handshake before the app
+    // sees it. Let the server release this exact session and initiate close.
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => { ws.close(); resolve(); }, 2500);
+      ws.addEventListener("close", () => { clearTimeout(timer); resolve(); }, {once:true});
+      ws.send(JSON.stringify({type:"end"}));
+    });
+  }
   function state(phase, message) {
     onState({
       phase,
@@ -37,7 +51,7 @@ export function createSession({
       s.capture?.disconnect();
       s.input?.disconnect();
       s.audio?.close().catch(() => {});
-      s.ws?.close();
+      if (s.ws) previousClose = finishSocket(s.ws);
       onBoundary();
       onActivity(message ? "Conversation interrupted" : "Conversation ended");
     }
@@ -138,6 +152,8 @@ export function createSession({
         };
       }
       state("connecting");
+      await previousClose;
+      if (session !== s) return;
       const ws = new WebSocket(
         location.origin.replace(/^http/, "ws") + "/api/assistant/" + mode,
       );

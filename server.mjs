@@ -160,10 +160,13 @@ voiceSockets.on('connection',async(socket,s,endpoint)=>{
   const fail=error=>{if(s.closing||s.socket!==socket)return;emit({type:'error',message:voiceError(error)});closeVoice(s);};
   const begin=()=>{if(!setup || !s.live || s.closing || started)return;started=true;ready=true;s.starting=false;emit({type:'ready'});if(textOnly)return;s.live.sendClientContent({turns:[{role:'user',parts:[{text:workspace?'Briefly greet me as Edith and ask how you can help.':`Greet me as ${business.name}, my AI assistant, and briefly offer to ${hosted?'book an appointment':'find a local file or book an appointment'}.`}]}],turnComplete:true});};
   socket.on('message',(raw,binary)=>{
-    if(!ready || !s.live || s.closing || s.socket!==socket)return;
+    if(s.closing || s.socket!==socket)return;
     try{
+      const event=binary?null:JSON.parse(raw.toString());
+      if(workspace && event?.type==='end'){closeVoice(s);return;}
+      if(!ready || !s.live)return;
       if(binary){if(textOnly||raw.length>16000 || raw.length%2)return; s.live.sendRealtimeInput({audio:{data:raw.toString('base64'),mimeType:'audio/pcm;rate=16000'}});}
-      else {const event=JSON.parse(raw.toString());if(workspace && event.type==='text'){
+      else {if(workspace && event.type==='text'){
           if(typeof event.text!=='string'||!event.text.trim()||event.text.length>2000||s.requestCount>=security.sessions.maxRequestsPerSession){emit({type:'error',message:'This message exceeds the session limit.'});return;}
           s.requestCount=(s.requestCount||0)+1;authority.revoke(s);s.fileUserSpeech='';s.fileWorkflow=false;
           s.live.sendClientContent({turns:[{role:'user',parts:[{text:event.text.trim()}]}],turnComplete:true});

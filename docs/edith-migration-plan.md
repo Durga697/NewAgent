@@ -35,3 +35,5 @@ The screenshot and copy references guide composition. Runtime status comes from 
 Desktop and mobile evidence is under [screenshots](screenshots/). Use `npm run test:workspace -- --screenshots` to regenerate the workspace images. The remaining voice roadmap includes automatic reconnection and full session resumption. Authentication across devices, durable tasks, remote pairing, document content access, OAuth and scheduling belong to subsequent phases. Browser checks cover accessible names, focus/navigation and automated rules. A human screen-reader review remains outstanding.
 
 During a repeat of the combined regression run the original booking browser check hit its 10-second server startup timeout. An isolated startup took 4.2 seconds and the booking browser check passed on retry. The original timeout remains in the test harness.
+
+The hosted smoke check caught a proxy timing difference when changing directly from text to voice. The workspace now asks the server to end the specific socket and waits for its close handshake before connecting the next session. Browser coverage checks the server acknowledgement.

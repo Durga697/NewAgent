@@ -80,6 +80,14 @@ try {
   const page = await context.newPage(),
     errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  let textSessionClosedByServer = false;
+  page.on("websocket", (socket) => {
+    if (!socket.url().endsWith("/api/assistant/text")) return;
+    socket.on("framereceived", ({ payload }) => {
+      if (typeof payload === "string" && JSON.parse(payload).type === "closed")
+        textSessionClosedByServer = true;
+    });
+  });
   await page.goto(base);
   await page.getByText("Configured", { exact: true }).waitFor();
   assert.equal(new URL(page.url()).pathname, "/app");
@@ -158,6 +166,7 @@ try {
   await page.getByRole("button", { name: "End session" }).click();
   await page.getByRole("button", { name: "Talk to Edith" }).click();
   await page.locator("#orb-status").getByText("Listening").waitFor();
+  assert(textSessionClosedByServer, "The server released text mode before voice started");
   assert(!setup.tools, "No tools should be advertised when file access is disabled");
   const until = Date.now() + 3000;
   while (!microphoneFrames && Date.now() < until)
