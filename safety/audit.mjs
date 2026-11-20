@@ -3,7 +3,7 @@ import {createHash,randomBytes,createHmac} from 'node:crypto';
 import path from 'node:path';
 import {SecurityError} from './errors.mjs';
 const events=new Set(['TOOL_REQUESTED','TOOL_ALLOWED','TOOL_DENIED','CONFIRMATION_REQUIRED','CONFIRMATION_APPROVED','CONFIRMATION_REJECTED','OPERATION_STARTED','OPERATION_SUCCEEDED','OPERATION_FAILED','AUTH_REJECTED','CONFIG_VALIDATION_FAILED']);
-const fields=new Set(['query','folder','extensions','modifiedAfter','modifiedBefore','sortBy','limit','resultId','serviceId','date','time','name','targetIds','operationId','token','requestId']);
+const fields=new Set(['query','folder','extensions','modifiedAfter','modifiedBefore','sortBy','limit','resultId','serviceId','date','time','name','targetIds','operationId','token','requestId','fileName','format','action','taskId','stepId','maxChars','selector','appId','drive','minSizeBytes','nameFilter','directoryName','newName','targetFolder','subFolder','actionId','deviceId','collectionId','documentId','documentIds','question','mode','ocrEnabled','selectedOnly','retentionDays']);
 const safe=value=>typeof value==='string'&&/^[A-Za-z0-9_:. -]{1,100}$/.test(value)?value:'REDACTED';
 export class AuditService {
   constructor(filename,{maxRecordBytes=8192,maxPageSize=100,authority}={}){this.filename=filename;this.maxRecordBytes=maxRecordBytes;this.maxPageSize=maxPageSize;this.authority=authority;this.salt=randomBytes(32);this.sequence=0;this.previous='0'.repeat(64);this.loaded=false;this.queue=Promise.resolve();}

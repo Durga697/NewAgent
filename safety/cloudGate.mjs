@@ -18,8 +18,68 @@ export class CloudGate {
     return {resultId:item.resultId,name:item.name,rootId:item.rootId,size:item.isDirectory?0:current.stat.size,modifiedAt:current.stat.mtime.toISOString(),expiresAt:new Date(item.expiresAt).toISOString()};
   }
   async toolOutput(tool,output,context){
+    if(tool==='read_local_text')return output.error?{error:{code:output.error.code,message:'Local text reading could not finish.'}}:{resultId:output.resultId,name:output.name,localOnly:true,message:'Read locally inside EDITH Agent Core. File content is withheld from cloud models.'};
+    if(tool==='save_report'){
+      if(output.error)return {error:{code:output.error.code,message:output.error.message}};
+      if(output.status==='confirmation_required')return {status:output.status,operationId:output.operationId,preview:output.preview,riskLevel:output.riskLevel,reversible:output.reversible};
+      return {status:output.status,rootId:output.rootId,fileName:output.fileName,sizeBytes:output.sizeBytes,verified:output.verified,createdAt:output.createdAt};
+    }
     if(['get_index_status','index_control'].includes(tool))return output.error?{error:{code:output.error.code,message:'Index request did not finish.'}}:{status:output.status,indexing:output.indexing,count:output.count,scanned:output.scanned,incomplete:output.incomplete};
     if(tool==='get_drive_information')return output.error?{error:{code:output.error.code}}:{message:'Drive discovery completed locally. Only configured roots are authorized.'};
+    if(['knowledge_search','knowledge_answer','knowledge_summarize','knowledge_compare','knowledge_extract_tables','knowledge_ingest_folder'].includes(tool)){
+      if(output.error)return {error:{code:output.error.code,message:output.error.message}};
+      if(output.status==='confirmation_required')return {status:output.status,operationId:output.operationId,preview:output.preview,riskLevel:output.riskLevel,reversible:output.reversible};
+      if(tool==='knowledge_ingest_folder'){
+        return {localOnly:true,status:output.status,folder:output.folder,indexedCount:output.indexedCount,unchangedCount:output.unchangedCount,message:'Folder indexed locally into Private Knowledge. Extracted document content stays on this machine.'};
+      }
+      return {
+        localOnly:true,
+        status:'completed_locally',
+        scopedDocumentCount:output.scopedDocumentCount||0,
+        matchCount:output.results?.length??output.citations?.length??0,
+        citations:(output.citations||output.results||[]).slice(0,8).map(c=>({documentId:c.documentId,fileName:c.fileName,chunkIndex:c.chunkIndex,section:c.section})),
+        message:'Private Knowledge processed this request locally. Extracted text, chunks, tables, and embeddings are withheld from cloud models.'
+      };
+    }
+    if(['get_system_metrics','list_running_processes','list_installed_apps','launch_approved_app','create_directory','rename_file','move_file','copy_file','recycle_file','undo_file_action'].includes(tool)){
+      if(output.error)return {error:{code:output.error.code,message:output.error.message}};
+      if(output.status==='confirmation_required')return {status:output.status,operationId:output.operationId,preview:output.preview,riskLevel:output.riskLevel,reversible:output.reversible};
+      if(tool==='get_system_metrics'){
+        return {
+          collectedAt:output.collectedAt,
+          platform:output.platform,
+          cpu:output.cpu?{cpuPercent:output.cpu.cpuPercent,cpuCores:output.cpu.cpuCores}:undefined,
+          memory:output.memory?{usedPercent:output.memory.usedPercent,usedGb:output.memory.usedGb,totalGb:output.memory.totalGb,freeGb:output.memory.freeGb}:undefined,
+          drives:(output.drives||[]).map(d=>({drive:d.drive,totalGb:d.totalGb,freeGb:d.freeGb,usedPercent:d.usedPercent})),
+          battery:output.battery?{supported:output.battery.supported,percent:output.battery.percent,status:output.battery.status}:undefined
+        };
+      }
+      if(tool==='list_running_processes'){
+        return {collectedAt:output.collectedAt,sortBy:output.sortBy,processes:(output.processes||[]).map(p=>({pid:p.pid,name:p.name,memoryMb:p.memoryMb,cpuSeconds:p.cpuSeconds}))};
+      }
+      if(tool==='list_installed_apps'){
+        return {apps:(output.apps||[]).map(a=>({appId:a.appId,displayName:a.displayName,category:a.category,installed:a.installed,enabled:a.enabled}))};
+      }
+      return {status:output.status,actionId:output.actionId,rootId:output.rootId,targetRootId:output.targetRootId,fileName:output.fileName,oldName:output.oldName,newName:output.newName,directoryName:output.directoryName,appId:output.appId,displayName:output.displayName,undoAvailable:output.undoAvailable,message:output.message||output.summary};
+    }
+    if(['find_large_files','find_duplicate_files'].includes(tool)){
+      if(output.error)return {error:{code:output.error.code,message:output.error.message}};
+      try{
+        this.authority.verify(context.authorization,context.session,'cloud.metadata');
+        if(tool==='find_large_files'){
+          const safeFiles=[];
+          for(const f of output.files||[]){try{const safe=await this.filePayload({provider:'gemini',kind:'metadata',reference:f.resultId},context);safeFiles.push({...safe,ordinal:f.ordinal});}catch{}}
+          return {totalScanned:output.totalScanned,truncated:output.truncated,minSizeBytes:output.minSizeBytes,files:safeFiles};
+        }
+        const safeGroups=[];
+        for(const g of output.groups||[]){
+          const safeFiles=[];
+          for(const f of g.files||[]){try{safeFiles.push(await this.filePayload({provider:'gemini',kind:'metadata',reference:f.resultId},context));}catch{}}
+          if(safeFiles.length>=2)safeGroups.push({hashPrefix:g.hashPrefix,sizeBytes:g.sizeBytes,wastedBytes:g.wastedBytes,count:safeFiles.length,files:safeFiles});
+        }
+        return {readOnly:true,deletedCount:0,totalScanned:output.totalScanned,groupCount:safeGroups.length,duplicateFileCount:safeGroups.reduce((n,g)=>n+g.count,0),totalWastedBytes:output.totalWastedBytes,groups:safeGroups};
+      }catch{return {error:{code:'PRIVACY_DENIED',message:'File analysis metadata cannot be shared with the cloud for this request.'}};}
+    }
     if(!['list_allowed_folders','search_files','open_file','reveal_in_folder','open_folder','get_file_metadata','resolve_file_reference'].includes(tool))return output;
     if(output.error)return {error:{code:output.error.code,message:'The local file request was denied or could not finish.'}};
     try{

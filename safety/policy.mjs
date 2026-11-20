@@ -17,6 +17,18 @@ export class PolicyEngine {
     const confirmation=tool.requiresConfirmation||riskLevel===Risk.DESTRUCTIVE_OR_BULK;
     const decision={requestId,toolName:tool.name,riskLevel,decision:confirmation?'NEEDS_CONFIRMATION':'ALLOW',reasonCode:confirmation?'CONFIRMATION_REQUIRED':'AUTHORIZED',sanitizedMetadata:{targetCount:count}};decisions.set(decision,{engine:this,authorization:context.authorization,session:context.session,permissions:tool.requiredPermissions});return Object.freeze(decision);
   }
-  permit(decision,context){const record=decisions.get(decision);if(decision.decision!=='ALLOW'||record?.engine!==this||record.authorization!==context.authorization||record.session!==context.session)throw new SecurityError('AUTH_DENIED','The operation has not been authorized.');for(const p of record.permissions)this.authority.verify(context.authorization,context.session,p);const permit=Object.freeze({requestId:decision.requestId});permits.set(permit,{session:context.session,toolName:decision.toolName,authority:this.authority,authorization:context.authorization,permissions:record.permissions});return permit;}
+  permit(decision,context,{approval}={}){
+    const record=decisions.get(decision);
+    if(record?.engine!==this||record.authorization!==context.authorization||record.session!==context.session)throw new SecurityError('AUTH_DENIED','The operation has not been authorized.');
+    if(decision.decision==='NEEDS_CONFIRMATION'){
+      if(approval?.state!=='APPROVED'||typeof approval.operationDigest!=='string'||approval.operationDigest.length!==64)throw new SecurityError('AUTH_DENIED','An approved exact-operation confirmation is required.');
+    }else if(decision.decision!=='ALLOW'){
+      throw new SecurityError('AUTH_DENIED','The operation has not been authorized.');
+    }
+    for(const p of record.permissions)this.authority.verify(context.authorization,context.session,p);
+    const permit=Object.freeze({requestId:decision.requestId});
+    permits.set(permit,{session:context.session,toolName:decision.toolName,authority:this.authority,authorization:context.authorization,permissions:record.permissions});
+    return permit;
+  }
 }
 export function requirePermit(permit,session,toolName){const record=permits.get(permit);if(!record||record.session!==session||record.toolName!==toolName)throw new SecurityError('AUTH_DENIED','A policy-authorized operation is required.');for(const p of record.permissions)record.authority.verify(record.authorization,session,p);}

@@ -48,6 +48,7 @@ export class FileIndex {
     return {...found,warnings,filters:{...query,tokens:undefined,rootIds:undefined,folderPath:undefined},queryVersion:this.progress.lastBatchAt||0};
   }
   async upsert(file){return this.rpc('upsert',{path:file});}
+  async remove(file){return this.rpc('remove',{path:file});}
   async snapshot(){return (await this.rpc('entries')).map(mapRow);}
   async close(){if(this.stopped)return;if(this.initialized){try{if(!this.failed)await this.rpc('close',{},10000);}finally{this.stopped=true;await this.worker?.terminate();}}else this.stopped=true;}
 }

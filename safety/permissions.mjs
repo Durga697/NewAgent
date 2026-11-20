@@ -1,24 +1,57 @@
 export const toolSecurity={
-  list_allowed_folders:{riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:false,requiresConfirmation:false},
-  search_files:{riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:true,requiresConfirmation:false},
-  open_file:{riskLevel:'READ_ONLY',requiredPermissions:['files.open'],requiresPathValidation:true,requiresConfirmation:false},
-  reveal_in_folder:{riskLevel:'READ_ONLY',requiredPermissions:['files.reveal'],requiresPathValidation:true,requiresConfirmation:false},
-  open_folder:{riskLevel:'READ_ONLY',requiredPermissions:['files.reveal'],requiresPathValidation:true,requiresConfirmation:false},
-  get_file_metadata:{riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:true,requiresConfirmation:false},
-  resolve_file_reference:{riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:false,requiresConfirmation:false},
-  get_index_status:{riskLevel:'READ_ONLY',requiredPermissions:['index.read'],requiresPathValidation:false,requiresConfirmation:false},
-  get_drive_information:{riskLevel:'READ_ONLY',requiredPermissions:['drives.read'],requiresPathValidation:false,requiresConfirmation:false},
-  index_control:{riskLevel:'READ_ONLY',requiredPermissions:['index.control'],requiresPathValidation:false,requiresConfirmation:false},
-  check_availability:{riskLevel:'READ_ONLY',requiredPermissions:['calendar.read'],requiresPathValidation:false,requiresConfirmation:false},
-  prepare_booking:{riskLevel:'READ_ONLY',requiredPermissions:['calendar.draft'],requiresPathValidation:false,requiresConfirmation:false}
+  list_allowed_folders:{id:'files.list_allowed_folders',riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  search_files:{id:'files.search_files',riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:10000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  open_file:{id:'files.open_file',riskLevel:'READ_ONLY',requiredPermissions:['files.open'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:8000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  reveal_in_folder:{id:'files.reveal_in_folder',riskLevel:'READ_ONLY',requiredPermissions:['files.reveal'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:8000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  open_folder:{id:'files.open_folder',riskLevel:'READ_ONLY',requiredPermissions:['files.reveal'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:8000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  get_file_metadata:{id:'files.get_file_metadata',riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  resolve_file_reference:{id:'files.resolve_file_reference',riskLevel:'READ_ONLY',requiredPermissions:['files.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:3000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  read_local_text:{id:'files.read_local_text',riskLevel:'READ_ONLY',requiredPermissions:['files.read','files.content.local'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  save_report:{id:'files.save_report',riskLevel:'REVERSIBLE',requiredPermissions:['files.write.report'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:10000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  get_index_status:{id:'index.get_status',riskLevel:'READ_ONLY',requiredPermissions:['index.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  get_drive_information:{id:'system.get_drive_information',riskLevel:'READ_ONLY',requiredPermissions:['drives.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:10000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  index_control:{id:'index.control',riskLevel:'READ_ONLY',requiredPermissions:['index.control'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:10000,cancellable:false,idempotent:false,auditMode:'redacted_metadata'},
+  check_availability:{id:'calendar.check_availability',riskLevel:'READ_ONLY',requiredPermissions:['calendar.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  prepare_booking:{id:'calendar.prepare_booking',riskLevel:'READ_ONLY',requiredPermissions:['calendar.draft'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:5000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  get_system_metrics:{id:'companion.get_system_metrics',riskLevel:'READ_ONLY',requiredPermissions:['companion.telemetry'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:10000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  list_running_processes:{id:'companion.list_running_processes',riskLevel:'READ_ONLY',requiredPermissions:['companion.telemetry'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:10000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  list_installed_apps:{id:'companion.list_installed_apps',riskLevel:'READ_ONLY',requiredPermissions:['companion.apps.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:8000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  find_large_files:{id:'companion.find_large_files',riskLevel:'READ_ONLY',requiredPermissions:['files.read','companion.files.analyze','cloud.metadata'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:12000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  find_duplicate_files:{id:'companion.find_duplicate_files',riskLevel:'READ_ONLY',requiredPermissions:['files.read','companion.files.analyze','cloud.metadata'],requiresPathValidation:true,requiresConfirmation:false,timeoutMs:15000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  launch_approved_app:{id:'companion.launch_approved_app',riskLevel:'REVERSIBLE',requiredPermissions:['companion.apps.read','companion.apps.launch','confirmation.create','confirmation.approve'],requiresPathValidation:false,requiresConfirmation:true,supportsExecution:true,timeoutMs:8000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  create_directory:{id:'companion.create_directory',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:8000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  rename_file:{id:'companion.rename_file',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:8000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  move_file:{id:'companion.move_file',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:12000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  copy_file:{id:'companion.copy_file',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:12000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'},
+  recycle_file:{id:'companion.recycle_file',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:15000,cancellable:false,idempotent:false,auditMode:'redacted_metadata'},
+  undo_file_action:{id:'companion.undo_file_action',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','companion.files.mutate','confirmation.create','confirmation.approve'],requiresPathValidation:false,requiresConfirmation:true,supportsExecution:true,timeoutMs:10000,cancellable:false,idempotent:false,auditMode:'redacted_metadata'},
+  knowledge_search:{id:'knowledge.search',riskLevel:'READ_ONLY',requiredPermissions:['knowledge.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:10000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  knowledge_answer:{id:'knowledge.answer',riskLevel:'READ_ONLY',requiredPermissions:['knowledge.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:12000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  knowledge_summarize:{id:'knowledge.summarize',riskLevel:'READ_ONLY',requiredPermissions:['knowledge.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:12000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  knowledge_compare:{id:'knowledge.compare',riskLevel:'READ_ONLY',requiredPermissions:['knowledge.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:12000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  knowledge_extract_tables:{id:'knowledge.extract_tables',riskLevel:'READ_ONLY',requiredPermissions:['knowledge.read'],requiresPathValidation:false,requiresConfirmation:false,timeoutMs:12000,cancellable:true,idempotent:true,auditMode:'redacted_metadata'},
+  knowledge_ingest_folder:{id:'knowledge.ingest_folder',riskLevel:'REVERSIBLE',requiredPermissions:['files.read','files.content.local','knowledge.write','confirmation.create','confirmation.approve'],requiresPathValidation:true,requiresConfirmation:true,supportsExecution:true,timeoutMs:15000,cancellable:true,idempotent:false,auditMode:'redacted_metadata'}
 };
 export function userPermissions(text,{fileContinuation=false}={}){
   const permissions=['calendar.read','calendar.draft'];
-  const fileRequest=/\b(?:find|search|locate|files?|folders?|downloads|documents?|invoice|bill|resume|open|reveal|explorer|pdfs?|excel|spreadsheets?|powerpoint|images?|photos?|pictures?|videos?|audio|python|projects?|onedrive|screenshots?)\b/i.test(text);
+  const fileRequest=/\b(?:find|search|locate|files?|folders?|downloads|documents?|invoice|invoices|bill|bills|resume|open|reveal|explorer|pdfs?|excel|spreadsheets?|powerpoint|images?|photos?|pictures?|videos?|audio|python|projects?|onedrive|screenshots?|offer\s+letters?|contracts?)\b/i.test(text);
+  const contentRequest=/\b(?:summari[sz]e|summary|read|extract|analy[sz]e|compare|report|mentioning|containing|tables?|knowledge|collection|selected\s+documents)\b/i.test(text)&&(fileRequest||/\b(?:report|summary|invoice|invoices|bill|bills|resume|document|documents|notes|csv|txt|md|pdf|docx|xlsx|offer|question|knowledge|collection)\b/i.test(text));
+  const knowledgeRequest=/\b(?:knowledge|collection|compare|extract\s+(?:the\s+)?tables?|mentioning|containing|offer\s+letters?|electricity\s+bill|selected\s+documents|downloaded\s+yesterday|index\s+(?:folder|collection))\b/i.test(text)||contentRequest;
+  const reportSaveRequest=/\b(?:save|write|create|generate|export)\b.*\b(?:report|summary|file|document|markdown|md|txt|json)\b/i.test(text);
+  const telemetryRequest=/\b(?:ram|memory|cpu|processor|processes?|battery|power|disk|storage|drive|drives|system|performance|usage)\b/i.test(text);
+  const appRequest=/\b(?:open|launch|start|run|installed|apps?|applications?|vs\s*code|vscode|visual\s+studio|notepad|calculator|calc|edge|explorer|paint)\b/i.test(text);
+  const fileAnalysisRequest=/\b(?:large|largest|biggest|duplicate|duplicates|copies|redundant|screenshots?)\b/i.test(text);
+  const fileMutateRequest=/\b(?:organize|organise|rename|move|copy|duplicate|create\s+(?:a\s+)?(?:folder|directory)|mkdir|recycle|trash|undo|restore|revert)\b/i.test(text);
   const selection=fileContinuation&&/^(?:open |show |the |yes|first|second|third|[1-9])/i.test(text.trim());
-  if(fileRequest||selection)permissions.push('files.read','files.open','files.reveal','cloud.metadata','confirmation.create','confirmation.approve');
+  if(fileRequest||selection||contentRequest)permissions.push('files.read','files.open','files.reveal','files.content.local','cloud.metadata','confirmation.create','confirmation.approve');
+  if(knowledgeRequest)permissions.push('knowledge.read','knowledge.write','files.read','files.content.local','cloud.metadata','confirmation.create','confirmation.approve');
+  if(reportSaveRequest)permissions.push('files.read','files.content.local','files.write.report','cloud.metadata','confirmation.create','confirmation.approve');
+  if(telemetryRequest)permissions.push('companion.telemetry','drives.read');
+  if(appRequest)permissions.push('companion.apps.read','companion.apps.launch','confirmation.create','confirmation.approve');
+  if(fileAnalysisRequest)permissions.push('files.read','companion.files.analyze','cloud.metadata');
+  if(fileMutateRequest)permissions.push('files.read','companion.files.analyze','companion.files.mutate','cloud.metadata','confirmation.create','confirmation.approve');
   if(/\b(?:index|indexing|scan|scanning)\b/i.test(text))permissions.push('index.read');
   if(/\b(?:start|pause|resume|cancel|rebuild|rescan)\b.*\b(?:index|indexing|scan|scanning)\b/i.test(text))permissions.push('index.control');
   if(/\b(?:drive|drives|volume|volumes)\b/i.test(text))permissions.push('drives.read');
-  return permissions;
+  return [...new Set(permissions)];
 }

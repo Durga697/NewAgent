@@ -85,6 +85,7 @@ parentPort.on('message',async message=>{
       else if(command==='cancel'){control.cancelled=true;control.paused=false;if(queuedRunId){emit('settled',{...status(),runId:queuedRunId,status:'cancelled'});queuedRunId=null;}result=status();}
       else if(command==='search')result=db.search(args);
       else if(command==='upsert'){const checked=await guard.inspect(args.path);db.upsert([metadata(checked)],null);progress.count=db.count();result={updated:true};}
+      else if(command==='remove'){db.remove(args.path);progress.count=db.count();result={removed:true};}
       else if(command==='entries')result=db.db.all('SELECT * FROM files LIMIT 1000');
       else throw new ToolError('INVALID_ARGUMENTS','Unknown index worker command.');
     }

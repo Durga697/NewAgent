@@ -1,0 +1,69 @@
+{
+  // EDITH OS 3.0 — Windows Companion Configuration (Phase B)
+  // Approved applications must use explicit, fixed executable paths without shell wrappers.
+  "version": 1,
+  "enabled": true,
+  "deviceName": "",
+  "largeFileMinBytes": 5242880,
+  "duplicateMaxFiles": 500,
+  "duplicateMaxFileBytes": 104857600,
+  "maxScanEntries": 5000,
+  "approvedApps": [
+    {
+      "appId": "vscode",
+      "displayName": "Visual Studio Code",
+      "category": "development",
+      "enabled": true,
+      "candidates": [
+        "${localAppData}\\Programs\\Microsoft VS Code\\Code.exe",
+        "${programFiles}\\Microsoft VS Code\\Code.exe"
+      ]
+    },
+    {
+      "appId": "notepad",
+      "displayName": "Notepad",
+      "category": "utilities",
+      "enabled": true,
+      "candidates": [
+        "${systemRoot}\\System32\\notepad.exe"
+      ]
+    },
+    {
+      "appId": "calculator",
+      "displayName": "Calculator",
+      "category": "utilities",
+      "enabled": true,
+      "candidates": [
+        "${systemRoot}\\System32\\calc.exe"
+      ]
+    },
+    {
+      "appId": "explorer",
+      "displayName": "File Explorer",
+      "category": "system",
+      "enabled": true,
+      "candidates": [
+        "${systemRoot}\\explorer.exe"
+      ]
+    },
+    {
+      "appId": "edge",
+      "displayName": "Microsoft Edge",
+      "category": "browser",
+      "enabled": true,
+      "candidates": [
+        "${programFilesX86}\\Microsoft\\Edge\\Application\\msedge.exe",
+        "${programFiles}\\Microsoft\\Edge\\Application\\msedge.exe"
+      ]
+    },
+    {
+      "appId": "paint",
+      "displayName": "Paint",
+      "category": "creative",
+      "enabled": true,
+      "candidates": [
+        "${systemRoot}\\System32\\mspaint.exe"
+      ]
+    }
+  ]
+}

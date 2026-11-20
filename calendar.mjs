@@ -5,15 +5,21 @@ import { dirname } from 'node:path';
 import {business,minuteOfDay} from './config.mjs';
 import {dateInZone,addDays,localInstant} from './dates.mjs';
 export {business};
-export function today(){return dateInZone(new Date(),business.timezone);}
-export function datePlus(days){return addDays(today(),days);}
+export function today(tz=business.timezone){return dateInZone(new Date(),tz);}
+export function datePlus(days,tz=business.timezone){return addDays(today(tz),days);}
 export class Calendar {
-  constructor(file, config=business, now=()=>Date.now()) {
+  constructor(file, config=business, now=()=>Date.now(), initialBookings=null) {
     this.business=config;this.now=now;
     this.file = file;
-    this.bookings = file && existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : [];
+    this.bookings = Array.isArray(initialBookings) ? [...initialBookings] : (file && existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : []);
   }
   service(id) { const s = this.business.services.find(s=>s.id===id); if(!s) throw new Error('Choose a valid service.'); return s; }
+  effectiveContact(service) {
+    const hasDetails = c => c && (c.name || c.phone || c.email);
+    if (hasDetails(service?.contact)) return { ...service.contact };
+    if (hasDetails(this.business.contact)) return { ...this.business.contact };
+    return null;
+  }
   availability(serviceId, date) {
     const service = this.service(serviceId);
     const {calendar:rules,timezone}=this.business;
@@ -34,7 +40,7 @@ export class Calendar {
     const service=this.service(serviceId);
     if(typeof name!=='string' || !name.trim() || name.trim().length>80) throw new Error('Please provide a name (up to 80 characters).');
     if(!this.availability(serviceId,date).includes(time)) throw new Error('That time is no longer available. Please choose another.');
-    return {id:randomUUID(),serviceId,service:service.name,date,time,name:name.trim(),minutes:service.minutes,price:service.price,timezone:this.business.timezone,currency:this.business.currency,businessName:this.business.name};
+    return {id:randomUUID(),serviceId,service:service.name,date,time,name:name.trim(),minutes:service.minutes,price:service.price,timezone:this.business.timezone,currency:this.business.currency,businessName:this.business.name,businessAddress:this.business.address,contact:this.effectiveContact(service)};
   }
   confirm(draft) {
     // Synchronous check + write prevents concurrent double bookings in this single-process demo.

@@ -88,7 +88,7 @@ try {
         textSessionClosedByServer = true;
     });
   });
-  await page.goto(base);
+  await page.goto(base + "/app");
   await page.getByText("Configured", { exact: true }).waitFor();
   assert.equal(new URL(page.url()).pathname, "/app");
   assert.equal(

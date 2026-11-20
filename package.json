@@ -15,7 +15,11 @@
     "check": "node checks/syntax.mjs",
     "test:security": "node --test test/security.test.mjs test/file-tools.test.mjs && node checks/security.mjs",
     "test:workspace": "node checks/workspace.mjs",
-    "test:all": "npm test && node checks/security.mjs && npm run test:files && npm run test:voice && npm run test:browser && npm run test:config && npm run test:workspace",
+    "test:users": "node checks/user-business.mjs",
+    "test:agent": "node checks/agent.mjs",
+    "test:companion": "node checks/companion.mjs",
+    "test:knowledge": "node checks/knowledge.mjs",
+    "test:all": "npm test && node checks/security.mjs && npm run test:files && npm run test:voice && npm run test:browser && npm run test:config && npm run test:workspace && npm run test:users && npm run test:agent && npm run test:companion && npm run test:knowledge",
     "test:phase2": "node --test test/indexing.test.mjs && node checks/files.mjs && node checks/security.mjs",
     "benchmark:index": "node checks/index-observation.mjs && node checks/index-benchmark.mjs"
   },
